@@ -1,0 +1,254 @@
+// EstateHub Prisma schema
+// This schema targets MySQL and is the source of truth for SQL migrations.
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserRole {
+  ADMIN
+  EMPLOYEE
+  CUSTOMER
+  AGENT
+}
+
+enum PlotStatus {
+  AVAILABLE
+  ADVANCE
+  SOLD
+}
+
+enum LeadStatus {
+  NEW
+  FOLLOW_UP
+  QUALIFIED
+  WON
+  LOST
+}
+
+enum TrackingStatus {
+  ACTIVE
+  INACTIVE
+  MOVING
+}
+
+enum CustomerStatus {
+  HOT_LEAD
+  FOLLOWING_UP
+  CONFIRMED_NOT_PAID
+  PAID_ADVANCE
+  BOOKED
+}
+
+enum EmployeeAccountStatus {
+  ACTIVE
+  FROZEN
+}
+
+model User {
+  id           String       @id @default(uuid())
+  email        String       @unique
+  passwordHash String
+  displayName  String
+  fullName     String
+  role         UserRole
+  department   String?
+  position     String?
+  adminCode    String?      @unique
+  employeeId   String?      @unique
+  phoneNumber  String?
+  address      String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  lastLogin    DateTime?
+
+  agentProfile AgentProfile?
+  favorites    Favorite[]
+  leads        Lead[]       @relation("LeadAgent")
+  inquiries    Inquiry[]    @relation("InquiryAgent")
+  trackingUpdates TrackingUpdate[] @relation("TrackingUpdatedBy")
+
+  employeeProfile EmployeeProfile?
+  sessions AuthSession[]
+}
+
+model AuthSession {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  revokedAt DateTime?
+
+  @@index([userId, revokedAt])
+  @@index([expiresAt])
+}
+
+model EmployeeProfile {
+  id               String                @id @default(uuid())
+  userId            String                @unique
+  user              User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  firstName         String?
+  lastName          String?
+  emailVerified     Boolean               @default(false)
+  phoneVerified     Boolean               @default(false)
+
+  dateOfBirth       DateTime?
+
+  yearsOfExperience Int?
+  currentCompany    String?
+  previousCompanies Json?
+  currentPosition   String?
+  roleGiven         String?
+
+  dateOfJoining     DateTime?
+  dateOfRelieving   DateTime?
+
+  achievements      Json?
+
+  status            EmployeeAccountStatus @default(ACTIVE)
+
+  createdAt         DateTime              @default(now())
+  updatedAt         DateTime              @updatedAt
+
+  @@index([status])
+  @@index([dateOfRelieving])
+}
+
+model Location {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  ventures  Venture[]
+  createdAt DateTime  @default(now())
+}
+
+model Venture {
+  id         String    @id @default(uuid())
+  name       String
+  locationId String
+  location   Location  @relation(fields: [locationId], references: [id])
+  plots      Plot[]
+  layoutImage String?
+  layoutRegions Json?
+  createdAt  DateTime  @default(now())
+
+  @@index([locationId])
+}
+
+model Plot {
+  id             String      @id @default(uuid())
+  plotNumber     String
+  status         PlotStatus
+  area           Int
+  pricePerSqYard Int
+  ventureId      String
+  venture        Venture     @relation(fields: [ventureId], references: [id])
+  x              Float?
+  y              Float?
+  width          Float?
+  height         Float?
+  shapeData      Json?
+  leads          Lead[]
+  favorites      Favorite[]
+  inquiries      Inquiry[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@index([ventureId])
+  @@index([status])
+}
+
+model Lead {
+  id             String     @id @default(uuid())
+  plotId         String
+  plot           Plot       @relation(fields: [plotId], references: [id])
+  customerName   String
+  email          String
+  contactNumber  String
+  location       String
+  uniqueId       String     @unique
+  pricePerSqYard Int
+  notes          String?
+  photoUrl       String?
+  status         LeadStatus @default(NEW)
+  agentId        String?
+  agent          User?      @relation("LeadAgent", fields: [agentId], references: [id])
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  @@index([plotId])
+  @@index([agentId])
+}
+
+model CustomerRecord {
+  id            String   @id @default(uuid())
+  contactName   String
+  contactNumber String
+  location      String
+  budget        String
+  interested    Boolean  @default(false)
+  status        CustomerStatus @default(FOLLOWING_UP)
+  recordOwner   String
+  leadName      String?
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  trackingUpdate TrackingUpdate?
+}
+
+model Favorite {
+  id        String   @id @default(uuid())
+  userId    String
+  plotId    String
+  user      User     @relation(fields: [userId], references: [id])
+  plot      Plot     @relation(fields: [plotId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, plotId])
+}
+
+model AgentProfile {
+  id            String   @id @default(uuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id])
+  bio           String?
+  phone         String?
+  licenseNumber String?
+  photoUrl      String?
+  createdAt     DateTime @default(now())
+}
+
+model Inquiry {
+  id             String   @id @default(uuid())
+  plotId         String?
+  plot           Plot?    @relation(fields: [plotId], references: [id])
+  agentId        String?
+  agent          User?    @relation("InquiryAgent", fields: [agentId], references: [id])
+  customerName   String
+  customerEmail  String
+  customerPhone  String?
+  message        String
+  createdAt      DateTime @default(now())
+}
+
+model TrackingUpdate {
+  id         String         @id @default(uuid())
+  customerId String         @unique
+  customer   CustomerRecord @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  latitude   Float
+  longitude  Float
+  status     TrackingStatus?
+  address    String?
+  updatedAt  DateTime       @updatedAt
+  updatedBy  String?
+  updatedByUser User?       @relation("TrackingUpdatedBy", fields: [updatedBy], references: [id])
+
+  @@index([updatedBy])
+}

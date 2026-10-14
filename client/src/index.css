@@ -1,0 +1,181 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 211 15% 9%;
+    --foreground: 220 30% 95%;
+
+    --card: 0 0% 100% / 0.72;
+    --card-foreground: 220 31% 14%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 31% 14%;
+
+    --primary: 43 54% 95%;
+    --primary-foreground: 0 0% 8%;
+
+    --secondary: 210 28% 95%;
+    --secondary-foreground: 220 25% 24%;
+
+    --muted: 210 25% 95%;
+    --muted-foreground: 215 15% 45%;
+
+    --accent: 42 86% 56%;
+    --accent-foreground: 210 30% 96%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 26% 89%;
+    --input: 214 26% 89%;
+    --ring: 203 74% 33%;
+
+    --radius: 1rem;
+
+    --plot-available: 148 63% 40%;
+    --plot-advance: 31 92% 54%;
+    --plot-demand: 38 92% 50%;
+    --plot-sold: 0 72% 51%;
+
+    --sidebar-background: 216 21% 8%;
+    --sidebar-foreground: 210 40% 96%;
+    --sidebar-primary: 198 72% 62%;
+    --sidebar-primary-foreground: 220 45% 12%;
+    --sidebar-accent: 217 31% 22%;
+    --sidebar-accent-foreground: 210 40% 96%;
+    --sidebar-border: 217 24% 26%;
+    --sidebar-ring: 198 72% 62%;
+  }
+
+  .dark {
+    --background: 216 13% 7%;
+    --foreground: 210 30% 96%;
+
+    --card: 222 28% 12% / 0.82;
+    --card-foreground: 210 40% 96%;
+
+    --popover: 222 28% 12%;
+    --popover-foreground: 210 40% 96%;
+
+    --primary: 198 72% 62%;
+    --primary-foreground: 222 34% 9%;
+
+    --secondary: 219 24% 18%;
+    --secondary-foreground: 210 40% 96%;
+
+    --muted: 220 20% 16%;
+    --muted-foreground: 214 16% 68%;
+
+    --accent: 218 24% 19%;
+    --accent-foreground: 210 40% 96%;
+
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 218 18% 22%;
+    --input: 218 18% 22%;
+    --ring: 198 72% 62%;
+
+    --sidebar-background: 222 34% 9%;
+    --sidebar-foreground: 210 40% 96%;
+    --sidebar-primary: 198 72% 62%;
+    --sidebar-primary-foreground: 222 34% 9%;
+    --sidebar-accent: 219 24% 18%;
+    --sidebar-accent-foreground: 210 40% 96%;
+    --sidebar-border: 218 18% 22%;
+    --sidebar-ring: 198 72% 62%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Manrope', sans-serif;
+    position: relative;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: url('/plot-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    filter: blur(1.5px);
+    transform: scale(1.03);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(circle at top left, hsl(202 100% 94% / 0.08), transparent 34%),
+      radial-gradient(circle at top right, hsl(215 65% 95% / 0.08), transparent 38%),
+      linear-gradient(180deg, hsl(var(--background) / 0.38) 0%, hsl(214 45% 14% / 0.24) 100%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  #root {
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+  }
+}
+
+@layer components {
+  .surface-panel {
+    @apply rounded-3xl border border-white/35 bg-white/60 shadow-[0_24px_80px_-36px_rgba(15,23,42,0.35)] backdrop-blur;
+  }
+
+  .surface-panel-dark {
+    @apply rounded-3xl border border-white/10 bg-slate-950/70 shadow-[0_24px_80px_-36px_rgba(2,6,23,0.8)] backdrop-blur;
+  }
+
+  .section-kicker {
+    @apply text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-primary/70;
+  }
+
+  .metric-card {
+    @apply surface-panel p-5 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_32px_90px_-40px_rgba(15,23,42,0.4)];
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .bg-plot-available {
+    background-color: hsl(var(--plot-available));
+  }
+
+  .bg-plot-advance {
+    background-color: hsl(var(--plot-advance));
+  }
+
+  .bg-plot-demand {
+    background-color: hsl(var(--plot-demand));
+  }
+
+  .bg-plot-sold {
+    background-color: hsl(var(--plot-sold));
+  }
+}

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="EstateHub">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#0B1220" />
+      <stop offset="1" stop-color="#0F2740" />
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="12" fill="url(#bg)" />
+  <rect x="13" y="30" width="12" height="22" rx="2" fill="#E6F0FF" />
+  <rect x="26" y="24" width="16" height="28" rx="2" fill="#E6F0FF" />
+  <rect x="43" y="34" width="10" height="18" rx="2" fill="#E6F0FF" />
+  <rect x="12" y="50" width="42" height="6" rx="3" fill="#E6F0FF" />
+  <path d="M26 22h16" stroke="#60A5FA" stroke-width="3" stroke-linecap="round" />
+  <path d="M31 50v6" stroke="#0B1220" stroke-width="3" stroke-linecap="round" />
+</svg>
+

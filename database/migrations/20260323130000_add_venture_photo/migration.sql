@@ -1,0 +1,2 @@
+-- Intentionally left as no-op.
+-- This migration id is retained to keep migration history consistent.

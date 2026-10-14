@@ -1,0 +1,8 @@
+-- AlterTable
+ALTER TABLE `plot` ADD COLUMN `height` DOUBLE NULL,
+    ADD COLUMN `width` DOUBLE NULL,
+    ADD COLUMN `x` DOUBLE NULL,
+    ADD COLUMN `y` DOUBLE NULL;
+
+-- AlterTable
+ALTER TABLE `venture` ADD COLUMN `layoutImage` VARCHAR(191) NULL;

@@ -1,0 +1,17 @@
+{
+  "expo": {
+    "name": "Venture Plus",
+    "slug": "venture-plus",
+    "version": "1.2.1",
+    "scheme": "ventureplus",
+    "orientation": "default",
+    "userInterfaceStyle": "light",
+    "icon": "./assets/app-logo.png",
+    "platforms": ["android", "ios", "web"],
+    "plugins": ["expo-router", "expo-secure-store"],
+    "experiments": { "typedRoutes": true },
+    "ios": { "supportsTablet": true, "bundleIdentifier": "com.ventureplus.mobile" },
+    "android": { "package": "com.ventureplus.mobile", "versionCode": 4 },
+    "web": { "bundler": "metro", "output": "single", "favicon": "./assets/favicon.png" }
+  }
+}

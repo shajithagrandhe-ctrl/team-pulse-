@@ -1,0 +1,2 @@
+-- Intentionally left as no-op.
+-- Replaced by 20260323173000_create_employee_assignment_table.

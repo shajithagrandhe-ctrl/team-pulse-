@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Customer Login Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            background: #f8f9fa;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Customer Login Test</h1>
+        
+        <div class="form-group">
+            <label for="email">Email Address:</label>
+            <input type="email" id="email" value="customer1@estatehub.com" />
+        </div>
+        
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" value="Cust123" />
+        </div>
+        
+        <button onclick="testLogin()">Test Customer Login</button>
+        <button onclick="testAllCustomers()">Test All Customers</button>
+        
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:3002/api';
+        
+        async function testLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const resultDiv = document.getElementById('result');
+            
+            resultDiv.innerHTML = '<div class="loading">Testing login...</div>';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `
+                        <div class="result success">
+                            <h2>✅ Login Successful!</h2>
+                            <h3>${data.data.user.displayName}</h3>
+                            <p><strong>Email:</strong> ${data.data.user.email}</p>
+                            <p><strong>Full Name:</strong> ${data.data.user.fullName}</p>
+                            <p><strong>Phone Number:</strong> ${data.data.user.phoneNumber}</p>
+                            <p><strong>Address:</strong> ${data.data.user.address}</p>
+                            <p><strong>Budget:</strong> ${data.data.user.budget}</p>
+                            <p><strong>User Type:</strong> ${data.data.user.userType}</p>
+                            <p><strong>Department:</strong> ${data.data.user.department}</p>
+                            <p><strong>Position:</strong> ${data.data.user.position}</p>
+                            <p><strong>Token:</strong> ${data.data.token.substring(0, 50)}...</p>
+                        </div>
+                    `;
+                } else {
+                    const error = await response.text();
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h2>❌ Login Failed!</h2>
+                            <p>Status: ${response.status}</p>
+                            <p>Error: ${error}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h2>❌ Connection Error!</h2>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+        
+        async function testAllCustomers() {
+            const customers = [
+                { email: 'customer1@estatehub.com', password: 'Cust123', name: 'Rajesh Kumar Reddy' },
+                { email: 'customer2@estatehub.com', password: 'Cust456', name: 'Sunita Devi Sharma' },
+                { email: 'customer3@estatehub.com', password: 'Cust789', name: 'Mohan Rao Naidu' },
+                { email: 'customer4@estatehub.com', password: 'Cust012', name: 'Priya Sharma Reddy' },
+                { email: 'customer5@estatehub.com', password: 'Cust345', name: 'Venkat Rao Murthy' },
+                { email: 'customer6@estatehub.com', password: 'Cust678', name: 'Anjali Gupta Sharma' },
+                { email: 'customer7@estatehub.com', password: 'Cust901', name: 'David Wilson Thomas' }
+            ];
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<div class="loading">Testing all customers...</div>';
+            
+            let results = [];
+            
+            for (const customer of customers) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            email: customer.email,
+                            password: customer.password
+                        })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        results.push(`✅ ${customer.name} - SUCCESS`);
+                    } else {
+                        results.push(`❌ ${customer.name} - FAILED (${response.status})`);
+                    }
+                } catch (error) {
+                    results.push(`❌ ${customer.name} - ERROR: ${error.message}`);
+                }
+            }
+            
+            resultDiv.innerHTML = `
+                <div class="result">
+                    <h2>Customer Login Test Results:</h2>
+                    <pre>${results.join('\n')}</pre>
+                </div>
+            `;
+        }
+        
+        // Auto-test on load
+        window.onload = function() {
+            testLogin();
+        };
+    </script>
+</body>
+</html>
